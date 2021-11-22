@@ -20,17 +20,20 @@ mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Camps
     .then(() => {
         console.log("Connection Accepted");
     })
-    .catch(() => {
+    .catch((e) => {
+        console.log(e);
         console.log("Connection Refused");
     });
 
 app.get("/campground", async (req, res) => {
-    const newCamp = new Campground({
-        title: "Test"
-    })
-    await newCamp.save();
-    console.log("Completed");
+    const campgrounds = await Campground.find({});
+    res.render("campgrounds/index.ejs", { campgrounds });
 
+})
+
+app.get("/campground/:id", async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/show.ejs", { campground });
 })
 
 
