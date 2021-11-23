@@ -14,6 +14,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/Views"));
 app.use(methodOverride('_method'));
 
+// Listening to port 3000
+app.listen(3000, () => {
+    console.log("Server is Running");
+})
+
 // Connection to the Mongo database
 const password = process.env.MONGO_PASSWORD;
 mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Campsites?retryWrites=true&w=majority`)
@@ -25,22 +30,43 @@ mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Camps
         console.log("Connection Refused");
     });
 
-app.get("/campground", async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index.ejs", { campgrounds });
-
+app.get("/", (req, res) => {
+    res.render("home.ejs");
 })
 
-app.get("/campground/:id", async (req, res) => {
+app.get("/campgrounds", async (req, res) => {
+    const campgrounds = await Campground.find({});
+    res.render("campgrounds/index.ejs", { campgrounds });
+})
+
+app.get("/campgrounds/new", (req, res) => {
+    res.render("campgrounds/new.ejs");
+})
+
+app.get("/campgrounds/:id/edit", async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/edit.ejs", { campground });
+})
+
+app.get("/campgrounds/:id", async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render("campgrounds/show.ejs", { campground });
 })
 
-
-app.listen(3000, () => {
-    console.log("Server is Running");
+app.put("/campgrounds/:id", async (req, res) => {
+    const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
+    res.redirect(`/campgrounds/${campground._id}`);
 })
 
-app.get("/", (req, res) => {
-    res.render("home.ejs");
+app.post("/campgrounds", async (req, res) => {
+    const newCamp = new Campground(req.body.campground);
+    await newCamp.save();
+    res.redirect("/campgrounds");
 })
+
+app.delete("/campgrounds/:id", async (req, res) => {
+    const campground = await Campground.findByIdAndDelete(req.params.id);
+    res.redirect(`/campgrounds`);
+})
+
+
