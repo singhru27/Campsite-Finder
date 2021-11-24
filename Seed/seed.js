@@ -35,7 +35,10 @@ function seedLocation(location) {
         .on('data', async function (row) {
             currCampsite = new Campground({
                 title: row.Name,
-                location: row.Location
+                location: row.Location,
+                image: "https://images.unsplash.com/photo-1485609315582-cfffa02888e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHw0ODQzNTF8fHx8fHx8MTYzNzcyNjAxOQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
+                price: Math.floor(Math.random() * 100),
+                description: "Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum"
             });
             await currCampsite.save();
 

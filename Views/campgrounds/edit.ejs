@@ -1,9 +1,42 @@
 <% layout("layout/boilerplate.ejs") -%>
+    <div class="row">
 
-    <form method="POST" action="/campgrounds/<%=campground._id %>?_method=PUT">
-        <label for="title">Title</label>
-        <input id="title" type="text" value="<%= campground.title %> " name="campground[title]">
-        <label for="location">Location</label>
-        <input id="location" type="text" value="<%= campground.location %> " name="campground[location]">
-        <button>Edit Campground</button>
-    </form>
+        <div class="col-6 offset-3">
+            <h1 class="text-center">Update Campground</h1>
+            <form method="POST" action="/campgrounds/<%=campground._id %>?_method=PUT">
+                <div>
+                    <label for="title" class="form-label">Title</label>
+                    <input class="form-control" id="title" type="text" value="<%= campground.title %> name="
+                        campground[title]">
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="location">Location</label>
+                    <input class="form-control" id="location" type="text" value="<%= campground.location %> "
+                        name="campground[location]">
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="image">Image</label>
+                    <input class="form-control" id="image" type="text" placeholder="Image URL" name="campground[image]"
+                        value=<%=campground.image %> >
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="price">Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input id="price" type="text" class="form-control" placeholder="0.00"
+                            aria-label="Amount (to the nearest dollar)" name="campground[price]"
+                            value=<%=campground.price %> >
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea class="form-control" id="description" placeholder="Description"
+                        name="campground[description]"> <%= campground.description %>  </textarea>
+                </div>
+
+                <button class="btn mt-3 btn-info"> Edit Campground</button>
+            </form>
+        </div>
+
+    </div>
