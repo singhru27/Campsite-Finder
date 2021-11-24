@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const methodOverride = require('method-override')
 const mongoose = require('mongoose');
+const ejsMate = require("ejs-mate");
 require('dotenv').config();
 const Campground = require("./Models/model.js");
 
@@ -11,6 +12,7 @@ const Campground = require("./Models/model.js");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // support encoded bodies
 app.set("view engine", "ejs");
+app.engine('ejs', ejsMate);
 app.set("views", path.join(__dirname, "/Views"));
 app.use(methodOverride('_method'));
 
