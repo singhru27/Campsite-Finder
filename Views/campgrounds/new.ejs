@@ -3,33 +3,34 @@
 
         <div class="col-6 offset-3">
             <h1 class="text-center">Add a New Campground</h1>
-            <form method="POST" action="/campgrounds">
+            <form method="POST" class="validated-form" action="/campgrounds" novalidate>
                 <div>
                     <label for="title" class="form-label">Title</label>
-                    <input class="form-control" id="title" type="text" placeholder="Title" name="campground[title]">
+                    <input required class="form-control" id="title" type="text" placeholder="Title"
+                        name="campground[title]">
                 </div>
                 <div class="mt-2">
                     <label class="form-label" for="location">Location</label>
-                    <input class="form-control" id="location" type="text" placeholder="Location"
+                    <input required class="form-control" id="location" type="text" placeholder="Location"
                         name="campground[location]">
                 </div>
                 <div class="mt-2">
                     <label class="form-label" for="image">Image</label>
-                    <input class="form-control" id="image" type="text" placeholder="Image URL" name="campground[image]">
+                    <input required class="form-control" id="image" type="text" placeholder="Image URL"
+                        name="campground[image]">
                 </div>
                 <div class="mt-2">
                     <label class="form-label" for="price">Price</label>
                     <div class="input-group">
                         <span class="input-group-text">$</span>
-                        <input id="price" type="text" class="form-control" placeholder="0.00"
+                        <input required id="price" type="text" class="form-control" placeholder="0.00"
                             aria-label="Amount (to the nearest dollar)" name="campground[price]">
                     </div>
                 </div>
 
                 <div class="mt-2">
                     <label class="form-label" for="description">Description</label>
-                    <textarea class="form-control" id="description" placeholder="Description"
-                        name="campground[description]"> </textarea>
+                    <textarea class="form-control" id="description" name="campground[description]" required></textarea>
                 </div>
 
                 <button class="btn mt-3 btn-success"> Submit</button>
