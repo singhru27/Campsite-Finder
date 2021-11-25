@@ -4,6 +4,7 @@ const path = require("path");
 const methodOverride = require('method-override')
 const mongoose = require('mongoose');
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/WrapAsync.js");
 require('dotenv').config();
 const Campground = require("./Models/model.js");
 
@@ -49,7 +50,6 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render("campgrounds/edit.ejs", { campground });
 })
-
 app.get("/campgrounds/:id", async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render("campgrounds/show.ejs", { campground });
@@ -62,15 +62,20 @@ app.put("/campgrounds/:id", async (req, res) => {
 
 });
 
-app.post("/campgrounds", async (req, res) => {
+app.post("/campgrounds", wrapAsync(async (req, res, next) => {
     const newCamp = new Campground(req.body.campground);
     await newCamp.save();
     res.redirect("/campgrounds");
-})
+    next(e);
+}))
 
 app.delete("/campgrounds/:id", async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     res.redirect(`/campgrounds`);
+})
+
+app.use((err, req, res, next) => {
+    res.send("An error has occured");
 })
 
 
