@@ -7,6 +7,8 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
 require('dotenv').config();
 const Campground = require("./Models/model.js");
+const ExpressError = require("./utils/ExpressError.js");
+const Joi = require("joi");
 
 
 // Setup configuration
@@ -37,45 +39,64 @@ app.get("/", (req, res) => {
     res.render("home.ejs");
 })
 
-app.get("/campgrounds", async (req, res) => {
+app.get("/campgrounds", wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render("campgrounds/index.ejs", { campgrounds });
-})
+}))
 
 app.get("/campgrounds/new", (req, res) => {
     res.render("campgrounds/new.ejs");
 })
 
-app.get("/campgrounds/:id/edit", async (req, res) => {
+app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render("campgrounds/edit.ejs", { campground });
-})
-app.get("/campgrounds/:id", async (req, res) => {
+}))
+app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render("campgrounds/show.ejs", { campground });
-})
+}))
 
-app.put("/campgrounds/:id", async (req, res) => {
+app.put("/campgrounds/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
     res.redirect(`/campgrounds/${campground._id}`);
 
 
-});
+}));
 
 app.post("/campgrounds", wrapAsync(async (req, res, next) => {
+    const campgroundSchema = Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required(),
+            description: Joi.string().required(),
+            image: Joi.number().required(),
+            location: Joi.string().required()
+
+        }).required()
+    })
+    const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    }
     const newCamp = new Campground(req.body.campground);
     await newCamp.save();
     res.redirect("/campgrounds");
-    next(e);
 }))
 
-app.delete("/campgrounds/:id", async (req, res) => {
+app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     res.redirect(`/campgrounds`);
+}))
+
+app.all("*", (req, res, next) => {
+    throw new ExpressError("Page Not Found", 404);
 })
 
 app.use((err, req, res, next) => {
-    res.send("An error has occured");
+    const { status = 500, message = "An Error Occurred" } = err;
+    res.status(status).render("error.ejs", err);
 })
 
 
