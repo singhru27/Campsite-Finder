@@ -7,9 +7,10 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
 require('dotenv').config();
 const Campground = require("./Models/model.js");
+const Review = require("./Models/review.js");
 const ExpressError = require("./utils/ExpressError.js");
 const Joi = require("joi");
-const { campgroundSchema } = require("./schemas.js");
+const { campgroundSchema, reviewSchema } = require("./schemas.js");
 
 
 // Setup configuration
@@ -39,6 +40,15 @@ mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Camps
 function validateCampground(req, res, next) {
 
     const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    }
+};
+
+function validateReview(req, res, next) {
+
+    const { error } = reviewSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
@@ -75,10 +85,18 @@ app.put("/campgrounds/:id", validateCampground, wrapAsync(async (req, res) => {
 }));
 
 app.post("/campgrounds", validateCampground, wrapAsync(async (req, res, next) => {
-
     const newCamp = new Campground(req.body.campground);
     await newCamp.save();
     res.redirect("/campgrounds");
+}))
+
+app.post("/campgrounds/:id/reviews", validateReview, wrapAsync(async (req, res) => {
+    const currCampground = await Campground.findById(req.params.id);
+    const currReview = new Review(req.body.review);
+    currCampground.reviews.push(currReview);
+    await currCampground.save();
+    await currReview.save();
+    res.redirect(`/campgrounds/${currCampground._id}`);
 }))
 
 app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
@@ -91,8 +109,10 @@ app.all("*", (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { status = 500, message = "An Error Occurred" } = err;
-    res.status(status).render("error.ejs", err);
+    if (!err.status) {
+        err.status = 500;
+    }
+    res.status(err.status).render("error.ejs", err);
 })
 
 
