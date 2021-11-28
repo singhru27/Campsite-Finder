@@ -43,16 +43,22 @@ function validateCampground(req, res, next) {
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
+    } else {
+        next();
     }
 };
 
 function validateReview(req, res, next) {
 
     const { error } = reviewSchema.validate(req.body);
+
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
+    } else {
+        next();
     }
+
 };
 
 app.get("/", (req, res) => {
@@ -73,15 +79,13 @@ app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
     res.render("campgrounds/edit.ejs", { campground });
 }));
 app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate("reviews");
     res.render("campgrounds/show.ejs", { campground });
 }));
 
 app.put("/campgrounds/:id", validateCampground, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
     res.redirect(`/campgrounds/${campground._id}`);
-
-
 }));
 
 app.post("/campgrounds", validateCampground, wrapAsync(async (req, res, next) => {
