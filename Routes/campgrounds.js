@@ -20,19 +20,6 @@ function validateCampground(req, res, next) {
     }
 };
 
-function validateReview(req, res, next) {
-
-    const { error } = reviewSchema.validate(req.body);
-
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-
-};
-
 router.get("/", wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render("campgrounds/index.ejs", { campgrounds });
@@ -51,8 +38,6 @@ router.get("/:id", wrapAsync(async (req, res) => {
     res.render("campgrounds/show.ejs", { campground });
 }));
 
-
-
 router.put("/:id", validateCampground, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
     res.redirect(`/campgrounds/${campground._id}`);
@@ -64,25 +49,10 @@ router.post("/", validateCampground, wrapAsync(async (req, res, next) => {
     res.redirect("/campgrounds");
 }));
 
-router.post("/:id/reviews", validateReview, wrapAsync(async (req, res) => {
-    const currCampground = await Campground.findById(req.params.id);
-    const currReview = new Review(req.body.review);
-    currCampground.reviews.push(currReview);
-    await currCampground.save();
-    await currReview.save();
-    res.redirect(`/campgrounds/${currCampground._id}`);
-}));
 
 router.delete("/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     res.redirect(`/campgrounds`);
-}));
-
-router.delete("/:id/reviews/:reviewid", wrapAsync(async (req, res) => {
-    const { id, reviewid } = req.params;
-    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewid } })
-    await Review.findByIdAndDelete(reviewid);
-    res.redirect(`/campgrounds/${id}`);
 }));
 
 module.exports = router;

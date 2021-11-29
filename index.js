@@ -6,12 +6,9 @@ const mongoose = require('mongoose');
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
 require('dotenv').config();
-const Campground = require("./Models/model.js");
-const Review = require("./Models/review.js");
 const ExpressError = require("./utils/ExpressError.js");
-const Joi = require("joi");
-const { campgroundSchema, reviewSchema } = require("./schemas.js");
 const campgroundsRoutes = require("./Routes/campgrounds.js");
+const reviewsRoutes = require("./Routes/reviews.js");
 
 // Setup configuration
 app.use(express.json());
@@ -43,6 +40,8 @@ app.get("/", (req, res) => {
 
 // Router breakout for all campgrounds based pages
 app.use('/campgrounds', campgroundsRoutes);
+// Router breakout for all review based pages
+app.use('/campgrounds/:id/reviews', reviewsRoutes);
 
 app.all("*", (req, res, next) => {
     throw new ExpressError("Page Not Found", 404);
@@ -52,7 +51,7 @@ app.use((err, req, res, next) => {
     if (!err.status) {
         err.status = 500;
     }
-    console.log(err.message);
+    console.log(err.stack);
     res.status(err.status).render("error.ejs", err);
 });
 
