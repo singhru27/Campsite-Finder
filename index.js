@@ -11,7 +11,7 @@ const Review = require("./Models/review.js");
 const ExpressError = require("./utils/ExpressError.js");
 const Joi = require("joi");
 const { campgroundSchema, reviewSchema } = require("./schemas.js");
-
+const campgroundsRoutes = require("./Routes/campgrounds.js");
 
 // Setup configuration
 app.use(express.json());
@@ -37,86 +37,12 @@ mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Camps
         console.log("Connection Refused");
     });
 
-function validateCampground(req, res, next) {
-
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
-
-function validateReview(req, res, next) {
-
-    const { error } = reviewSchema.validate(req.body);
-
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-
-};
-
 app.get("/", (req, res) => {
     res.render("home.ejs");
 });
 
-app.get("/campgrounds", wrapAsync(async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index.ejs", { campgrounds });
-}));
-
-app.get("/campgrounds/new", (req, res) => {
-    res.render("campgrounds/new.ejs");
-});
-
-app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render("campgrounds/edit.ejs", { campground });
-}));
-app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate("reviews");
-    res.render("campgrounds/show.ejs", { campground });
-}));
-
-
-
-app.put("/campgrounds/:id", validateCampground, wrapAsync(async (req, res) => {
-    const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
-    res.redirect(`/campgrounds/${campground._id}`);
-}));
-
-app.post("/campgrounds", validateCampground, wrapAsync(async (req, res, next) => {
-    const newCamp = new Campground(req.body.campground);
-    await newCamp.save();
-    res.redirect("/campgrounds");
-}));
-
-app.post("/campgrounds/:id/reviews", validateReview, wrapAsync(async (req, res) => {
-    const currCampground = await Campground.findById(req.params.id);
-    const currReview = new Review(req.body.review);
-    currCampground.reviews.push(currReview);
-    await currCampground.save();
-    await currReview.save();
-    res.redirect(`/campgrounds/${currCampground._id}`);
-}));
-
-app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
-    const campground = await Campground.findByIdAndDelete(req.params.id);
-    res.redirect(`/campgrounds`);
-}));
-
-app.delete("/campgrounds/:id/reviews/:reviewid", wrapAsync(async (req, res) => {
-    const { id, reviewid } = req.params;
-    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewid } })
-    await Review.findByIdAndDelete(reviewid);
-    res.redirect(`/campgrounds/${id}`);
-
-}));
+// Router breakout for all campgrounds based pages
+app.use('/campgrounds', campgroundsRoutes);
 
 app.all("*", (req, res, next) => {
     throw new ExpressError("Page Not Found", 404);
