@@ -83,6 +83,8 @@ app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
     res.render("campgrounds/show.ejs", { campground });
 }));
 
+
+
 app.put("/campgrounds/:id", validateCampground, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
     res.redirect(`/campgrounds/${campground._id}`);
@@ -92,7 +94,7 @@ app.post("/campgrounds", validateCampground, wrapAsync(async (req, res, next) =>
     const newCamp = new Campground(req.body.campground);
     await newCamp.save();
     res.redirect("/campgrounds");
-}))
+}));
 
 app.post("/campgrounds/:id/reviews", validateReview, wrapAsync(async (req, res) => {
     const currCampground = await Campground.findById(req.params.id);
@@ -101,22 +103,31 @@ app.post("/campgrounds/:id/reviews", validateReview, wrapAsync(async (req, res) 
     await currCampground.save();
     await currReview.save();
     res.redirect(`/campgrounds/${currCampground._id}`);
-}))
+}));
 
 app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     res.redirect(`/campgrounds`);
-}))
+}));
+
+app.delete("/campgrounds/:id/reviews/:reviewid", wrapAsync(async (req, res) => {
+    const { id, reviewid } = req.params;
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewid } })
+    await Review.findByIdAndDelete(reviewid);
+    res.redirect(`/campgrounds/${id}`);
+
+}));
 
 app.all("*", (req, res, next) => {
     throw new ExpressError("Page Not Found", 404);
-})
+});
 
 app.use((err, req, res, next) => {
     if (!err.status) {
         err.status = 500;
     }
+    console.log(err.message);
     res.status(err.status).render("error.ejs", err);
-})
+});
 
 
