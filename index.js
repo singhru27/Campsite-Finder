@@ -17,6 +17,7 @@ app.set("view engine", "ejs");
 app.engine('ejs', ejsMate);
 app.set("views", path.join(__dirname, "/Views"));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'Public')));
 
 // Listening to port 3000
 app.listen(3000, () => {
