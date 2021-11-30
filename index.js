@@ -21,10 +21,7 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'Public')));
 app.use(flash());
 
-// Listening to port 3000
-app.listen(3000, () => {
-    console.log("Server is Running");
-});
+
 
 // Configuration file for the session
 const sessionConfig = {
@@ -70,15 +67,19 @@ app.use('/campgrounds/:id/reviews', reviewsRoutes);
 
 
 app.all('*', (req, res, next) => {
-    next(new ExpressError('Page Not Found', 404))
+    next(new ExpressError('Page Not Found', 404));
 })
 
 app.use((err, req, res, next) => {
     if (!err.status) {
         err.status = 500;
     }
-    console.log(err.stack);
-    res.status(err.status).render("error.ejs", err);
+    res.status(err.status).render("error.ejs", { err });
 });
 
 
+
+// Listening to port 3000
+app.listen(3000, () => {
+    console.log("Server is Running");
+});

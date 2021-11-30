@@ -4,7 +4,10 @@
         <div class="col-6 offset-3">
             <div class="alert alert-danger" role="alert">
                 <h4>Oh no, something went wrong!</h4>
-                <p>Status Code: <%= status %>
+                <p>Status Code: <%= err.status %>
+                </p>
+                <p>
+                    <%= err.stack %>
                 </p>
             </div>
         </div>
