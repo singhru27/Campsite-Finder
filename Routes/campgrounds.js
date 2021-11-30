@@ -22,7 +22,7 @@ function validateCampground(req, res, next) {
 
 router.get("/", wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
-    res.render("campgrounds/index.ejs", { campgrounds });
+    return res.render("campgrounds/index.ejs", { campgrounds });
 }));
 
 router.get("/new", (req, res) => {
@@ -35,11 +35,19 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 }));
 router.get("/:id", wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id).populate("reviews");
+    if (!campground) {
+        req.flash("error", "Campground cannot be found");
+        return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/show.ejs", { campground });
 }));
 
 router.put("/:id", validateCampground, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
+    if (!campground) {
+        req.flash("error", "Campground cannot be found");
+        return res.redirect("/campgrounds");
+    }
     req.flash('success', 'Successfully edited a campground');
     res.redirect(`/campgrounds/${campground._id}`);
 }));
