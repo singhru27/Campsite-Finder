@@ -1,0 +1,22 @@
+<% layout("layout/boilerplate.ejs") -%>
+    <div class="row">
+
+        <div class="col-6 offset-3">
+            <h1 class="text-center">Login</h1>
+            <form method="POST" class="validated-form" action="/login" novalidate>
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input required class="form-control" id="username" type="text" placeholder="Username"
+                        name="username">
+                </div>
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input required class="form-control" id="password" type="password" placeholder="Password"
+                        name="password">
+                </div>
+
+                <button class="btn mt-3 btn-success"> Submit</button>
+            </form>
+        </div>
+
+    </div>

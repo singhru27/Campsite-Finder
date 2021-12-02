@@ -1,7 +1,7 @@
 const express = require('express');
 const wrapAsync = require("../utils/WrapAsync.js");
 const User = require("../Models/user.js");
-
+const passport = require("passport");
 const router = express.Router({ mergeParams: true });
 
 
@@ -9,7 +9,7 @@ router.get("/register", (req, res) => {
     res.render('users/register.ejs');
 });
 
-module.exports = router.post("/register", wrapAsync(async (req, res) => {
+router.post("/register", wrapAsync(async (req, res) => {
     try {
         const { username, email, password } = req.body;
         const newUser = new User({ username: username, email: email });
@@ -21,3 +21,15 @@ module.exports = router.post("/register", wrapAsync(async (req, res) => {
         res.redirect("/register");
     }
 }));
+
+router.get("/login", (req, res) => {
+    res.render('users/login.ejs');
+});
+
+router.post("/login", passport.authenticate('local', { failureFlash: true, failureRedirect: "/login" }), (req, res) => {
+    req.flash("success", "Succesfully logged in");
+    res.redirect("/campgrounds");
+
+})
+
+module.exports = router;
