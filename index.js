@@ -11,6 +11,11 @@ const campgroundsRoutes = require("./Routes/campgrounds.js");
 const reviewsRoutes = require("./Routes/reviews.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require('passport-local');
+const User = require("./Models/user.js");
+
+
 // Setup configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // support encoded bodies
@@ -19,9 +24,6 @@ app.engine('ejs', ejsMate);
 app.set("views", path.join(__dirname, "/Views"));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'Public')));
-app.use(flash());
-
-
 
 // Configuration file for the session
 const sessionConfig = {
@@ -34,8 +36,14 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
-
+app.use(flash());
 app.use(session(sessionConfig));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 // Connection to the Mongo database
 const password = process.env.MONGO_PASSWORD;
@@ -59,6 +67,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
     res.render("home.ejs");
 });
+
 
 // Router breakout for all campgrounds based pages
 app.use('/campgrounds', campgroundsRoutes);
