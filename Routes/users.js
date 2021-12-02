@@ -9,11 +9,16 @@ router.get("/register", (req, res) => {
     res.render('users/register.ejs');
 });
 
-router.post("/register", wrapAsync(async (req, res) => {
+router.post("/register", wrapAsync(async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
         const newUser = new User({ username: username, email: email });
         const registeredUser = await User.register(newUser, password);
+        req.login(registeredUser, (err) => {
+            if (err) {
+                return next();
+            }
+        });
         req.flash('success', "Welcome to CampFinder!");
         res.redirect("/campgrounds");
     } catch (e) {
