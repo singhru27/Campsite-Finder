@@ -8,6 +8,7 @@ const Review = require("../Models/review.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Joi = require("joi");
 const { campgroundSchema, reviewSchema } = require("../schemas.js");
+const { isLoggedIn } = require("../Middleware/middleware.js");
 
 function validateCampground(req, res, next) {
 
@@ -25,7 +26,7 @@ router.get("/", wrapAsync(async (req, res) => {
     return res.render("campgrounds/index.ejs", { campgrounds });
 }));
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new.ejs");
 });
 
