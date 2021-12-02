@@ -9,6 +9,7 @@ require('dotenv').config();
 const ExpressError = require("./utils/ExpressError.js");
 const campgroundsRoutes = require("./Routes/campgrounds.js");
 const reviewsRoutes = require("./Routes/reviews.js");
+const usersRoutes = require("./Routes/users.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -73,7 +74,8 @@ app.get("/", (req, res) => {
 app.use('/campgrounds', campgroundsRoutes);
 // Router breakout for all review based pages
 app.use('/campgrounds/:id/reviews', reviewsRoutes);
-
+// Router breakout for all user based pages
+app.use('/', usersRoutes);
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
