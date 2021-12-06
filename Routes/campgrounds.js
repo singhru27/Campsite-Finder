@@ -5,7 +5,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("../utils/WrapAsync.js");
 const Campground = require("../Models/model.js");
 const Review = require("../Models/review.js");
-const { isLoggedIn, validateCampground } = require("../Middleware/middleware.js");
+const { isLoggedIn, validateCampground, verifyOwner } = require("../Middleware/middleware.js");
 
 
 
@@ -18,8 +18,8 @@ router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new.ejs");
 });
 
-router.get("/:id/edit", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+router.get("/:id/edit", isLoggedIn, verifyOwner, wrapAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id).populate("reviews").populate("owner");
     res.render("campgrounds/edit.ejs", { campground, currentUser: req.user });
 }));
 router.get("/:id", wrapAsync(async (req, res) => {
@@ -31,8 +31,8 @@ router.get("/:id", wrapAsync(async (req, res) => {
     res.render("campgrounds/show.ejs", { campground });
 }));
 
-router.put("/:id", validateCampground, wrapAsync(async (req, res) => {
-    const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
+router.put("/:id", isLoggedIn, verifyOwner, wrapAsync(async (req, res) => {
+    const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground).populate("reviews").populate("owner");
     if (!campground) {
         req.flash("error", "Campground cannot be found");
         return res.redirect("/campgrounds");
@@ -41,8 +41,8 @@ router.put("/:id", validateCampground, wrapAsync(async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.post("/", validateCampground, wrapAsync(async (req, res, next) => {
-    const newCamp = new Campground(req.body.campground);
+router.post("/", isLoggedIn, validateCampground, wrapAsync(async (req, res, next) => {
+    const newCamp = new Campground(req.body.campground).populate("reviews").populate("owner");
     newCamp.owner = req.user;
     await newCamp.save();
     req.flash('success', 'Successfully created a new campground');
@@ -50,7 +50,7 @@ router.post("/", validateCampground, wrapAsync(async (req, res, next) => {
 }));
 
 
-router.delete("/:id", wrapAsync(async (req, res) => {
+router.delete("/:id", isLoggedIn, verifyOwner, validateCampground, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     req.flash('success', 'Successfully deleted a campground');
     res.redirect(`/campgrounds`);
