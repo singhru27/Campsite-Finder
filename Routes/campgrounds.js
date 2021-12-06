@@ -5,21 +5,9 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("../utils/WrapAsync.js");
 const Campground = require("../Models/model.js");
 const Review = require("../Models/review.js");
-const ExpressError = require("../utils/ExpressError.js");
-const Joi = require("joi");
-const { campgroundSchema, reviewSchema } = require("../schemas.js");
-const { isLoggedIn } = require("../Middleware/middleware.js");
+const { isLoggedIn, validateCampground } = require("../Middleware/middleware.js");
 
-function validateCampground(req, res, next) {
 
-    const { error } = campgroundSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
 
 router.get("/", wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find({});

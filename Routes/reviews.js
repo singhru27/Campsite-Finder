@@ -5,19 +5,11 @@ const Review = require("../Models/review.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Joi = require("joi");
 const { campgroundSchema, reviewSchema } = require("../schemas.js");
+const { validateReview } = require("../Middleware/middleware.js");
 
 
-function validateReview(req, res, next) {
 
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
 
-};
 const router = express.Router({ mergeParams: true });
 
 
