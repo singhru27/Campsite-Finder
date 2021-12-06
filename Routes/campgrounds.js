@@ -32,10 +32,10 @@ router.get("/new", isLoggedIn, (req, res) => {
 
 router.get("/:id/edit", wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
-    res.render("campgrounds/edit.ejs", { campground });
+    res.render("campgrounds/edit.ejs", { campground, currentUser: req.user });
 }));
 router.get("/:id", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate("reviews");
+    const campground = await Campground.findById(req.params.id).populate("reviews").populate("owner");
     if (!campground) {
         req.flash("error", "Campground cannot be found");
         return res.redirect("/campgrounds");
@@ -55,6 +55,7 @@ router.put("/:id", validateCampground, wrapAsync(async (req, res) => {
 
 router.post("/", validateCampground, wrapAsync(async (req, res, next) => {
     const newCamp = new Campground(req.body.campground);
+    newCamp.owner = req.user;
     await newCamp.save();
     req.flash('success', 'Successfully created a new campground');
     res.redirect(`/campgrounds/${newCamp._id}`);
