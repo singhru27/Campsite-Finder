@@ -42,7 +42,7 @@ router.put("/:id", isLoggedIn, verifyOwner, wrapAsync(async (req, res) => {
 }));
 
 router.post("/", isLoggedIn, validateCampground, wrapAsync(async (req, res, next) => {
-    const newCamp = new Campground(req.body.campground).populate("reviews").populate("owner");
+    const newCamp = new Campground(req.body.campground);
     newCamp.owner = req.user;
     await newCamp.save();
     req.flash('success', 'Successfully created a new campground');
@@ -50,7 +50,7 @@ router.post("/", isLoggedIn, validateCampground, wrapAsync(async (req, res, next
 }));
 
 
-router.delete("/:id", isLoggedIn, verifyOwner, validateCampground, wrapAsync(async (req, res) => {
+router.delete("/:id", isLoggedIn, verifyOwner, wrapAsync(async (req, res) => {
     const campground = await Campground.findByIdAndDelete(req.params.id);
     req.flash('success', 'Successfully deleted a campground');
     res.redirect(`/campgrounds`);

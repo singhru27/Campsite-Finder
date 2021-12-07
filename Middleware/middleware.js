@@ -6,7 +6,7 @@ const Campground = require("../Models/model.js");
 const isLoggedIn = function (req, res, next) {
     if (!req.isAuthenticated()) {
         req.session.returnTo = req.originalUrl;
-        req.flash("error", "You must log in to visit this page");
+        req.flash("error", "You must log in to do this");
         res.redirect("/login");
     } else {
         return next();
