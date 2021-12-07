@@ -1,6 +1,5 @@
 const Campground = require("../Models/model.js");
 const Review = require("../Models/review.js");
-const { isLoggedIn, validateCampground, verifyOwner } = require("../Middleware/middleware.js");
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});

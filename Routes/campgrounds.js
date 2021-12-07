@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("../utils/WrapAsync.js");
-const campgroundController = require('../Controllers/Campgrounds.js');
+const campgroundController = require('../Controllers/campgrounds.js');
 const { isLoggedIn, validateCampground, verifyOwner } = require("../Middleware/middleware.js");
 
 
