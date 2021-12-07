@@ -5,13 +5,17 @@ const wrapAsync = require("../utils/WrapAsync.js");
 const campgroundController = require('../Controllers/campgrounds.js');
 const { isLoggedIn, validateCampground, verifyOwner } = require("../Middleware/middleware.js");
 
+router.route("/")
+    .get(wrapAsync(campgroundController.index))
+    .post(isLoggedIn, validateCampground, wrapAsync(campgroundController.createCampground));
 
-
-router.get("/", wrapAsync(campgroundController.index));
 router.get("/new", isLoggedIn, campgroundController.showNewForm);
+
+router.route("/:id")
+    .get(wrapAsync(campgroundController.showCampground))
+    .put(isLoggedIn, verifyOwner, wrapAsync(campgroundController.editCampground))
+    .delete(isLoggedIn, verifyOwner, wrapAsync(campgroundController.deleteCampground))
+
 router.get("/:id/edit", isLoggedIn, verifyOwner, wrapAsync(campgroundController.showEditForm));
-router.get("/:id", wrapAsync(campgroundController.showCampground));
-router.put("/:id", isLoggedIn, verifyOwner, wrapAsync(campgroundController.editCampground));
-router.post("/", isLoggedIn, validateCampground, wrapAsync(campgroundController.createCampground));
-router.delete("/:id", isLoggedIn, verifyOwner, wrapAsync(campgroundController.deleteCampground));
+
 module.exports = router;
