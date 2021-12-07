@@ -61,6 +61,8 @@
                                 </h5>
                                 <div class="card-text">
                                     Review: <%= review.body %>
+                                        <br>
+                                        Submitted by: <%= review.owner.username %>
                                 </div>
                                 <form method="POST"
                                     action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE">

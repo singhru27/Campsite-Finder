@@ -4,8 +4,14 @@ const Campground = require("../Models/model.js");
 
 
 const isLoggedIn = function (req, res, next) {
+    const { id } = req.params;
     if (!req.isAuthenticated()) {
-        req.session.returnTo = req.originalUrl;
+        if (req.query._method === 'DELETE') {
+            req.session.returnTo = `/campgrounds/${id}`;
+        } else {
+            req.session.returnTo = req.originalUrl;
+        }
+        console.log(req.session.returnTo);
         req.flash("error", "You must log in to do this");
         res.redirect("/login");
     } else {

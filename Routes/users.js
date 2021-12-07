@@ -38,7 +38,7 @@ router.post("/login", passport.authenticate('local', { failureFlash: true, failu
         redirectionUrl = req.session.returnTo;
         delete req.session.returnTo;
     }
-    res.redirect(redirectionUrl);
+    return res.redirect(redirectionUrl);
 
 })
 

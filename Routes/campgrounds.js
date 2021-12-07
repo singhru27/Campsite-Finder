@@ -23,7 +23,12 @@ router.get("/:id/edit", isLoggedIn, verifyOwner, wrapAsync(async (req, res) => {
     res.render("campgrounds/edit.ejs", { campground, currentUser: req.user });
 }));
 router.get("/:id", wrapAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate("reviews").populate("owner");
+    const campground = await Campground.findById(req.params.id).populate({
+        path: 'reviews',
+        populate: {
+            path: 'owner'
+        }
+    }).populate("owner");
     if (!campground) {
         req.flash("error", "Campground cannot be found");
         return res.redirect("/campgrounds");
