@@ -64,12 +64,14 @@
                                         <br>
                                         Submitted by: <%= review.owner.username %>
                                 </div>
-                                <form method="POST"
-                                    action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE">
-                                    <button class="btn btn-danger btn-small mt-3">
-                                        Delete
-                                    </button>
-                                </form>
+                                <% if (currentUser && currentUser._id.equals(review.owner._id)) { %>
+                                    <form method="POST"
+                                        action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                        <button class="btn btn-danger btn-small mt-3">
+                                            Delete
+                                        </button>
+                                    </form>
+                                    <% } %>
                             </div>
 
                         </div>
