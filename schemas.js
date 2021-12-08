@@ -4,7 +4,10 @@ module.exports.campgroundSchema = Joi.object({
         title: Joi.string().required(),
         price: Joi.number().required(),
         description: Joi.string().required(),
-        image: Joi.string().required(),
+        image: Joi.object({
+            url: Joi.string().required(),
+            key: Joi.string().required()
+        }),
         location: Joi.string().required()
 
     }).required()

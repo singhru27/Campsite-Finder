@@ -14,7 +14,6 @@ aws.config.update({
     region: 'us-east-2'
 });
 const fileFilter = (req, file, cb) => {
-    console.log(file.mimetype);
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true);
     } else {
@@ -30,7 +29,7 @@ const upload = multer({
         acl: 'public-read',
         bucket: 'webapp-images-campfinder',
         key: function (req, file, cb) {
-            cb(null, Date.now()); //use Date.now() for unique file keys
+            cb(null, String(Date.now())); //use Date.now() for unique file keys
         }
     }),
     fileFilter: fileFilter

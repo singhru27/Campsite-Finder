@@ -8,10 +8,7 @@ const { upload } = require("../AWS/S3.js");
 
 router.route("/")
     .get(wrapAsync(campgroundController.index))
-    // .post(isLoggedIn, validateCampground, wrapAsync(campgroundController.createCampground));
-    .post(isLoggedIn, upload.array('image'), (req, res) => {
-        res.send(req.body);
-    });
+    .post(isLoggedIn, upload.array('image'), validateCampground, wrapAsync(campgroundController.createCampground));
 
 router.get("/new", isLoggedIn, campgroundController.showNewForm);
 
