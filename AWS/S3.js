@@ -13,6 +13,14 @@ aws.config.update({
     accessKeyId: process.env.AWS_ACCESS_ID,
     region: 'us-east-2'
 });
+const fileFilter = (req, file, cb) => {
+    console.log(file.mimetype);
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
 
 const s3 = new aws.S3();
 
@@ -22,10 +30,11 @@ const upload = multer({
         acl: 'public-read',
         bucket: 'webapp-images-campfinder',
         key: function (req, file, cb) {
-            console.log(file);
-            cb(null, file.originalname); //use Date.now() for unique file keys
+            cb(null, Date.now()); //use Date.now() for unique file keys
         }
-    })
+    }),
+    fileFilter: fileFilter
+
 });
 
 module.exports.upload = upload;
