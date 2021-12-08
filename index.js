@@ -5,7 +5,6 @@ const methodOverride = require('method-override')
 const mongoose = require('mongoose');
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
-require('dotenv').config();
 const ExpressError = require("./utils/ExpressError.js");
 const campgroundsRoutes = require("./Routes/campgrounds.js");
 const reviewsRoutes = require("./Routes/reviews.js");
@@ -15,6 +14,10 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require('passport-local');
 const User = require("./Models/user.js");
+
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
 
 
 // Setup configuration
