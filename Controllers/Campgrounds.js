@@ -1,5 +1,6 @@
 const Campground = require("../Models/model.js");
 const Review = require("../Models/review.js");
+const {deleteFromS3} = require("../AWS/S3.js");
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -30,10 +31,17 @@ module.exports.showCampground = async (req, res) => {
 }
 
 module.exports.editCampground = async (req, res) => {
-    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground).populate("reviews").populate("owner");
     const images = req.files.map(f => ({ url: f.location, key: f.key }));
     campground.image.push(...images);
+    if (req.body.deleteImages) { 
+        await campground.updateOne({$pull: {image: {key: {$in :req.body.deleteImages}}}});
+        for (let currImage of req.body.deleteImages) {
+            deleteFromS3(currImage);
+        }
+    
+    }
+
     await campground.save();
     if (!campground) {
         req.flash("error", "Campground cannot be found");

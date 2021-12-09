@@ -3,6 +3,7 @@ const aws = require('aws-sdk');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
+const { SESV2 } = require('aws-sdk');
 
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
@@ -36,6 +37,15 @@ const upload = multer({
 
 });
 
+const deleteObject = function(key) {
+    s3.deleteObject({
+        Bucket: 'webapp-images-campfinder',
+        Key: key
+    } ,(err, data) => {
+    })
+}
+
 module.exports.upload = upload;
+module.exports.deleteFromS3 = deleteObject;
 
 
