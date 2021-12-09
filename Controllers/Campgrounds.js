@@ -31,6 +31,9 @@ module.exports.showCampground = async (req, res) => {
 
 module.exports.editCampground = async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground).populate("reviews").populate("owner");
+    const images = req.files.map(f => ({ url: f.location, key: f.key }));
+    campground.image.push(...images);
+    await campground.save();
     if (!campground) {
         req.flash("error", "Campground cannot be found");
         return res.redirect("/campgrounds");
@@ -40,7 +43,6 @@ module.exports.editCampground = async (req, res) => {
 }
 
 module.exports.createCampground = async (req, res, next) => {
-
     const newCamp = new Campground(req.body.campground);
     newCamp.image = req.files.map(f => ({ url: f.location, key: f.key }));
     newCamp.owner = req.user;
