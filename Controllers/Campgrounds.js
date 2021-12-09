@@ -30,6 +30,7 @@ module.exports.showCampground = async (req, res) => {
 }
 
 module.exports.editCampground = async (req, res) => {
+    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground).populate("reviews").populate("owner");
     const images = req.files.map(f => ({ url: f.location, key: f.key }));
     campground.image.push(...images);

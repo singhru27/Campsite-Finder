@@ -42,7 +42,6 @@ async function verifyReviewOwner(req, res, next) {
 }
 
 function validateCampground(req, res, next) {
-
     const { error } = campgroundSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
