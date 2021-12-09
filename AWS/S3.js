@@ -2,8 +2,9 @@ const express = require('express');
 const aws = require('aws-sdk');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const multerS3 = require('multer-s3');
+const multerS3 = require('multer-s3-transform');
 const { SESV2 } = require('aws-sdk');
+const sharp = require('sharp');
 
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
@@ -29,9 +30,18 @@ const upload = multer({
         s3: s3,
         acl: 'public-read',
         bucket: 'webapp-images-campfinder',
-        key: function (req, file, cb) {
-            cb(null, String(Date.now())); //use Date.now() for unique file keys
-        }
+        shouldTransform : function (req, file, cb) {
+            cb(null, /^image/i.test(file.mimetype))
+        },
+        transforms: [{
+            id: String(Date.now()),
+            key: function (req, file, cb) {
+                cb(null, String(Date.now())); //use Date.now() for unique file keys
+            },
+            transform: function (req, file, cb) {
+                cb(null, sharp().resize(1000,1000).jpeg())
+            }
+        }]
     }),
     fileFilter: fileFilter
 

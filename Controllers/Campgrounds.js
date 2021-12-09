@@ -53,8 +53,7 @@ module.exports.editCampground = async (req, res) => {
 
 module.exports.createCampground = async (req, res, next) => {
     const newCamp = new Campground(req.body.campground);
-    newCamp.image = req.files.map(f => ({ url: f.location, key: f.key }));
-    console.log(req.files);
+    newCamp.image = req.files.map(f => ({ url: f.transforms[0].location, key: f.transforms[0].key }));
     newCamp.owner = req.user;
     await newCamp.save();
     req.flash('success', 'Successfully created a new campground');
