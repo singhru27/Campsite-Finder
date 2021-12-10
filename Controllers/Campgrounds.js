@@ -1,6 +1,11 @@
 const Campground = require("../Models/model.js");
 const Review = require("../Models/review.js");
 const {deleteFromS3} = require("../AWS/S3.js");
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+
+const geocoder = mbxGeocoding({
+    accessToken: process.env.MAPBOX_TOKEN
+});
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -52,7 +57,12 @@ module.exports.editCampground = async (req, res) => {
 }
 
 module.exports.createCampground = async (req, res, next) => {
+    const results = await geocoder.forwardGeocode({
+        query: req.body.campground.location,
+        limit: 1
+    }).send();
     const newCamp = new Campground(req.body.campground);
+    newCamp.geometry = results.body.features[0].geometry;
     newCamp.image = req.files.map(f => ({ url: f.transforms[0].location, key: f.transforms[0].key }));
     newCamp.owner = req.user;
     await newCamp.save();

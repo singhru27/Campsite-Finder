@@ -1,6 +1,7 @@
 <% layout("layout/boilerplate.ejs") -%>
     <div class="row">
         <div class="col-6">
+            <div id="map" style="width: 400px; height: 400px"></div>
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <% for (let img of campground.image) { %>
@@ -9,6 +10,7 @@
                             <img src=<%=img.url %> class="d-block w-100" alt="...">
                         </div>
                         <% } %>
+                        
                 </div>
                 <% if (campground.image.length> 1) { %>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
@@ -111,3 +113,8 @@
                         <% } %>
         </div>
     </div>
+    <script>
+        const MAP_TOKEN = '<%- process.env.MAPBOX_TOKEN %>';
+        let currCampground = <%- campground.geometry %>;
+    </script>
+    <script src="/Javascript/mapbox.js"></script>
