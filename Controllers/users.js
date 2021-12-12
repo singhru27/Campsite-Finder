@@ -14,8 +14,8 @@ module.exports.registerUser = async (req, res, next) => {
         return next();
       }
     });
-    req.flash("success", "Welcome to CampFinder!");
-    res.redirect("/campgrounds");
+    req.flash("success", "Welcome to GeoCacher!");
+    res.redirect("/geocaches");
   } catch (e) {
     req.flash("error", e.message);
     res.redirect("/register");
@@ -28,7 +28,7 @@ module.exports.showLogin = (req, res) => {
 
 module.exports.loginUser = (req, res) => {
   req.flash("success", "Succesfully logged in");
-  let redirectionUrl = "/campgrounds";
+  let redirectionUrl = "/geocaches";
   if (req.session.returnTo) {
     redirectionUrl = req.session.returnTo;
     delete req.session.returnTo;

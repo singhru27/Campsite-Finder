@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const campgroundsRoutes = require("./Routes/campgrounds.js");
+const geocacheRoutes = require("./Routes/geocaches.js");
 const reviewsRoutes = require("./Routes/reviews.js");
 const usersRoutes = require("./Routes/users.js");
 const session = require("express-session");
@@ -15,6 +15,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./Models/user.js");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const MongoStore = require("connect-mongo");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -32,10 +34,22 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "Public")));
 // Sanitizing mongo inputs
 app.use(mongoSanitize());
+// Using helmet security middleware
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+// Connection to the Mongo database
+const password = process.env.MONGO_PASSWORD;
 
 // Configuration file for the session
 const sessionConfig = {
-  secret: "TestSecret",
+  store: MongoStore.create({
+    mongoUrl: `mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Campsites?retryWrites=true&w=majority`,
+    secret: process.env.SESSION_PASS,
+  }),
+  secret: process.env.SESSION_PASS,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -46,14 +60,13 @@ const sessionConfig = {
 };
 app.use(flash());
 app.use(session(sessionConfig));
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Connection to the Mongo database
-const password = process.env.MONGO_PASSWORD;
 mongoose
   .connect(
     `mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Campsites?retryWrites=true&w=majority`
@@ -78,10 +91,10 @@ app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
-// Router breakout for all campgrounds based pages
-app.use("/campgrounds", campgroundsRoutes);
+// Router breakout for all Geocache based pages
+app.use("/geocaches", geocacheRoutes);
 // Router breakout for all review based pages
-app.use("/campgrounds/:id/reviews", reviewsRoutes);
+app.use("/geocaches/:id/reviews", reviewsRoutes);
 // Router breakout for all user based pages
 app.use("/", usersRoutes);
 

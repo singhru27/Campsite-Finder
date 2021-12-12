@@ -4,27 +4,27 @@
         All GeoCaches
     </h1>
     <ul class="ps-0">
-        <% for (let campground of campgrounds) { %>
+        <% for (let geocache of geocaches) { %>
             <div class="row mb-3">
                 <div class="col-md-4 ms-0">
-                    <img class="img-fluid" alt="" src=<% if (campground.image.length> 0) { %><%=campground.image[0].url
+                    <img class="img-fluid" alt="" src=<% if (geocache.image.length> 0) { %><%=geocache.image[0].url
                         %>
                         <% } %> >                
                 </div>
                 <div class="col-md-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <%= campground.title %>
+                            <%= geocache.title %>
                         </h5>
                         <p class="card-text">
-                            <%= campground.description %>
+                            <%= geocache.description %>
                         </p>
                         <p class="card-text">
                             <small class="text-muted">
-                                <%= campground.location %>
+                                <%= geocache.location %>
                             </small>
                         </p>
-                        <a class="btn btn-primary" href="/campgrounds/<%= campground._id %> "> View <%= campground.title
+                        <a class="btn btn-primary" href="/geocaches/<%= geocache._id %> "> View <%= geocache.title
                                 %> </a>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
             <% } %>
     </ul>
     <script>
-        const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
+        const geocaches = {features: <%- JSON.stringify(geocaches) %>};
         const MAP_TOKEN = '<%- process.env.MAPBOX_TOKEN %>';
     </script>
     <script src="/Javascript/clusterMap.js"></script>

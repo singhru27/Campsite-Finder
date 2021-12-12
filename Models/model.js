@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Review = require("./review.js");
 
-const CampgroundSchema = mongoose.Schema(
+const GeocacheSchema = mongoose.Schema(
   {
     title: String,
     price: Number,
@@ -41,11 +41,11 @@ const CampgroundSchema = mongoose.Schema(
   }
 );
 
-CampgroundSchema.virtual("properties.popup").get(function () {
-  return `<a href=/campgrounds/${this._id}> ${this.title} </a>`;
+GeocacheSchema.virtual("properties.popup").get(function () {
+  return `<a href=/geocaches/${this._id}> ${this.title} </a>`;
 });
 
-CampgroundSchema.post("findOneAndDelete", async (doc) => {
+GeocacheSchema.post("findOneAndDelete", async (doc) => {
   if (doc) {
     await Review.deleteMany({
       _id: {
@@ -54,4 +54,4 @@ CampgroundSchema.post("findOneAndDelete", async (doc) => {
     });
   }
 });
-module.exports = mongoose.model("Campground", CampgroundSchema);
+module.exports = mongoose.model("Geocache", GeocacheSchema);
