@@ -87,6 +87,14 @@ module.exports.createGeocache = async (req, res, next) => {
 
 module.exports.deleteGeocache = async (req, res) => {
   const geocache = await Geocache.findByIdAndDelete(req.params.id);
+  const images = geocache.image;
+
+  if (images) {
+    for (let currImage of images) {
+      deleteFromS3(currImage.key);
+    }
+  }
+
   req.flash("success", "Successfully deleted a Geocache");
   res.redirect(`/geocaches`);
 };
