@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const methodOverride = require('method-override')
-const mongoose = require('mongoose');
+const methodOverride = require("method-override");
+const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/WrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
@@ -12,34 +12,38 @@ const usersRoutes = require("./Routes/users.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
-const LocalStrategy = require('passport-local');
+const LocalStrategy = require("passport-local");
 const User = require("./Models/user.js");
+const mongoSanitize = require("express-mongo-sanitize");
 
 if (process.env.NODE_ENV !== "production") {
-    require('dotenv').config();
+  require("dotenv").config();
 }
-
 
 // Setup configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // support encoded bodies
 app.set("view engine", "ejs");
-app.engine('ejs', ejsMate);
+app.engine("ejs", ejsMate);
+// Setting Views directory
 app.set("views", path.join(__dirname, "/Views"));
-app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'Public')));
+// Enabling PUT and DELETE requests
+app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "Public")));
+// Sanitizing mongo inputs
+app.use(mongoSanitize());
 
 // Configuration file for the session
 const sessionConfig = {
-    secret: "TestSecret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        httpOnly: true,
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
-}
+  secret: "TestSecret",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
 app.use(flash());
 app.use(session(sessionConfig));
 app.use(passport.initialize());
@@ -48,53 +52,51 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 // Connection to the Mongo database
 const password = process.env.MONGO_PASSWORD;
-mongoose.connect(`mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Campsites?retryWrites=true&w=majority`)
-    .then(() => {
-        console.log("Connection Accepted");
-    })
-    .catch((e) => {
-        console.log(e);
-        console.log("Connection Refused");
-    });
+mongoose
+  .connect(
+    `mongodb+srv://singhru:${password}@rsdb.bodim.mongodb.net/Campsites?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    console.log("Connection Accepted");
+  })
+  .catch((e) => {
+    console.log(e);
+    console.log("Connection Refused");
+  });
 
 // Middleware that handles flash messages
-
 app.use((req, res, next) => {
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    res.locals.currentUser = req.user;
-    next();
-})
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currentUser = req.user;
+  next();
+});
 
 app.get("/", (req, res) => {
-    res.render("home.ejs");
+  res.render("home.ejs");
 });
-
 
 // Router breakout for all campgrounds based pages
-app.use('/campgrounds', campgroundsRoutes);
+app.use("/campgrounds", campgroundsRoutes);
 // Router breakout for all review based pages
-app.use('/campgrounds/:id/reviews', reviewsRoutes);
+app.use("/campgrounds/:id/reviews", reviewsRoutes);
 // Router breakout for all user based pages
-app.use('/', usersRoutes);
+app.use("/", usersRoutes);
 
-app.all('*', (req, res, next) => {
-    next(new ExpressError('Page Not Found', 404));
-})
-
-app.use((err, req, res, next) => {
-    if (!err.status) {
-        err.status = 500;
-    }
-    res.status(err.status).render("error.ejs", { err });
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404));
 });
 
-
+app.use((err, req, res, next) => {
+  if (!err.status) {
+    err.status = 500;
+  }
+  res.status(err.status).render("error.ejs", { err });
+});
 
 // Listening to port 3000
 app.listen(3000, () => {
-    console.log("Server is Running");
+  console.log("Server is Running");
 });

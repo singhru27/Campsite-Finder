@@ -1,0 +1,17 @@
+.row {
+  height: 75vh;
+}
+
+body {
+  background-image: url("/Images/geocache-home-opaque.png");
+  background-size: cover;
+}
+
+.opaque-card {
+  background-color: rgba(245, 245, 245, 0);
+  border: none;
+}
+
+.btn-width {
+  width: 50%;
+}

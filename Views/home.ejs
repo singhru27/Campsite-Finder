@@ -8,11 +8,34 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
-</head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="/Stylesheets/home.css" rel="stylesheet">
+    </head>
 
 <body>
-    <h1>Welcome from Home</h1>
+    <div class = "container">
+        <div class = "row main-container justify-content-center">
+            <div class="col-sm-6 text-center my-auto">
+                <div class="opaque-card card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title" >
+                            <h1>Welcome To GeoCacher <sup>&copy;</sup></h1>
+                        </h5>
+                        <% if (!currentUser) {%> 
+                            <a class="btn btn-primary btn-width mt-5" type="button" href="/login">Login</a>
+                            <br>
+                            <a class="btn btn-primary btn-width mt-2" type="button" href="/register">Register</a>
+                        <%} else {%>
+                            <a class="btn btn-primary btn-width mt-5" type="button" href="/campgrounds">View GeoCaches</a>
+                            <br>
+                            <a class="btn btn-primary btn-width mt-2" type="button" href="/logout">Logout</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
