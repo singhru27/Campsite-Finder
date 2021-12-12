@@ -4,7 +4,6 @@ const Review = require("./review.js");
 const GeocacheSchema = mongoose.Schema(
   {
     title: String,
-    price: Number,
     description: String,
     image: [
       {

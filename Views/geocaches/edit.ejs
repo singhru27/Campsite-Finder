@@ -18,10 +18,17 @@
                     <input class="form-control" type="file" id="image" name="image" multiple>
                 </div>
                 <div class="mt-2">
-                    <label class="form-label" for="price">Price</label>
+                    <label class="form-label" for="latitude">Latitude</label>
                     <div class="input-group">
-                        <span class="input-group-text">$</span>
-                        <input id="price" type="text" class="form-control" placeholder="0.00" aria-label="Amount (to the nearest dollar)" name="geocache[price]" value=<%=campground.price %> >
+                        <input required id="latitude" type="text" class="form-control" value=<%= geocache.geometry.coordinates[1]  %> 
+                            aria-label="Latitude" name="geocache[latitude]">
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label" for="longitude">Longitude</label>
+                    <div class="input-group">
+                        <input required id="longitude" type="text" class="form-control" value=<%= geocache.geometry.coordinates[0]  %> 
+                            aria-label="Longitude" name="geocache[longitude]">
                     </div>
                 </div>
 

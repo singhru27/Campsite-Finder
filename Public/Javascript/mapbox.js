@@ -1,7 +1,7 @@
 mapboxgl.accessToken = MAP_TOKEN;
 const map = new mapboxgl.Map({
   container: "map",
-  style: "mapbox://styles/mapbox/satellite-v9",
+  style: "mapbox://styles/mapbox/satellite-streets-v11",
   center: currGeocache.geometry.coordinates, // starting position [lng, lat]
   zoom: 9, // starting zoom
 });

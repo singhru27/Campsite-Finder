@@ -67,14 +67,15 @@ module.exports.editGeocache = async (req, res) => {
 };
 
 module.exports.createGeocache = async (req, res, next) => {
-  const results = await geocoder
-    .forwardGeocode({
-      query: req.body.geocache.location,
-      limit: 1,
-    })
-    .send();
+  results = {
+    type: "Point",
+    coordinates: [
+      Number(req.body.geocache.longitude),
+      Number(req.body.geocache.latitude),
+    ],
+  };
   const newGeocache = new Geocache(req.body.geocache);
-  newGeocache.geometry = results.body.features[0].geometry;
+  newGeocache.geometry = results;
   newGeocache.image = req.files.map((f) => ({
     url: f.transforms[0].location,
     key: f.transforms[0].key,
