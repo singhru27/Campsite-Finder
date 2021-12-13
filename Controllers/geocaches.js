@@ -46,7 +46,10 @@ module.exports.editGeocache = async (req, res) => {
   )
     .populate("reviews")
     .populate("owner");
-  const images = req.files.map((f) => ({ url: f.location, key: f.key }));
+  const images = req.files.map((f) => ({
+    url: f.transforms[0].location,
+    key: f.transforms[0].key,
+  }));
   geocache.image.push(...images);
   if (req.body.deleteImages) {
     await geocache.updateOne({
