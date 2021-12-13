@@ -17,6 +17,8 @@ const User = require("./Models/user.js");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const MongoStore = require("connect-mongo");
+const https = require("https");
+const fs = require("fs");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -109,7 +111,20 @@ app.use((err, req, res, next) => {
   res.status(err.status).render("error.ejs", { err });
 });
 
-// Listening to port 3000
-app.listen(3000, () => {
-  console.log("Server is Running");
+// // Listening to port 3001
+// app.listen(3001, () => {
+//   console.log("Server is Running");
+// });
+const privateKey = fs.readFileSync("privkey.pem", "utf8");
+const certificate = fs.readFileSync("cert.pem", "utf8");
+const ca = fs.readFileSync("chain.pem", "utf8");
+
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca: ca,
+};
+
+https.createServer(credentials, app).listen(3001, () => {
+  console.log("Listening...");
 });
