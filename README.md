@@ -24,7 +24,7 @@ https://geocacher.rujulsingh.com/
 
 A screenshot of the program output is below
 
-![ScreenShot](https://github.com/singhru27/Geocacher/blob/master/screenshots/Home.png)
+![ScreenShot](https://github.com/singhru27/Geocacher/blob/main/screenshots/Home.png?raw=true)
 
 
 ## Installation and Setup Instructions
