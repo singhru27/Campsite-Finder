@@ -29,28 +29,14 @@ A screenshot of the program output is below
 
 ## Installation and Setup Instructions
 
-To run the program, first make sure that Python is installed. Then, install all dependencies as delineated in the 
+To make edits to the program, make sure you have Node + NPM installed on your computer. Download the directory, and run the following command
 
 ```
-requirements.txt
+npm init
 ```
-file. To run the basic RNN model and print out training + test accuracy, run the following:
-
-```
-main.py RNN
-```
-
-To run the modified RNN model with an additional dropout layer, run the following:
+After installing all dependencies, you will need to ensure that you are connecting to your own MongoDB Atlas cluster and S3 bucket in the 
 
 ```
-main.py RNN_DROPOUT
+index.js
 ```
-
-To run the production model which utilizes both RNN layers as well as dense layers for the numerical input (this model is what was eventually used for the website itself), run the following:
-
-```
-main.py RNN_ALL
-```
-
-
-
+file. 
